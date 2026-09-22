@@ -10,7 +10,7 @@ public abstract class Car implements Vehicle {
     private final String chassisNumber;
     private int currentGear;
     private float totalConsumption;
-    boolean isRunning = false;
+    private boolean isRunning = false;
     private float kmDriven;
     private float averageFuelConsumption;
 
@@ -41,7 +41,7 @@ public abstract class Car implements Vehicle {
     }
 
     public void setTireSize(int tireSize) {
-        if (tireSize >= 15) {
+        if (tireSize >= 15 && tireSize <= 23) {
             this.tireSize = tireSize;
         } else {
             System.out.println("Invalid tire size");
@@ -101,11 +101,17 @@ public abstract class Car implements Vehicle {
     @Override
     public void drive(double kms) {
         double consumedNow;
+        if (kms < 0) {
+            throw new IllegalArgumentException("Invalid kms given");
+        }
         if (isRunning) {
             consumedNow = (consumptionPer100Km * kms) / 100;
             totalConsumption += consumedNow;
             availableFuel -= consumedNow;
             kmDriven += kms;
+            if (availableFuel <= 0) {
+                throw new IllegalStateException("The car ran out of fuel.");
+            }
         } else {
             System.out.println("Car Engine Is Not Running");
         }
@@ -115,6 +121,10 @@ public abstract class Car implements Vehicle {
     public void stop() {
         isRunning = false;
         System.out.println("Car stopped");
+    }
+
+    public boolean isRunning() {
+        return isRunning;
     }
 
 
